@@ -1,0 +1,9 @@
+Generate a C-style block comment for the following function.
+
+Limit overall width to 80 columns.
+
+Start the comment with "* <method> - <description of the method>".
+Follow with "@<param>: - <description of the param>" for each parameter.
+Follow with "* Function Expectations:".
+Follow with "- <behavior expectation>" for each major function behavior.
+Follow with a description of the return value.

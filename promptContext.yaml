@@ -1,0 +1,192 @@
+# This is the prior context which we provide to lamacoopDocgen
+
+Prompts:
+    'Prompt1': | 
+               /**
+               * static_tramp_func - description of the function
+               * @ops: description of the argument
+               * @rec: description of the argument
+               *
+               * Functions Expectations:
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               */
+               Fill in the above block comment with information from the following code 
+               For Function's expectations: provide several lines of explanation for how every combination of arguments will affect the output start each explanation with a " -"
+               MAKE SURE TO ALWAYS PRODUCE A C BLOCK COMMENT, only produce one block comment
+               keep the comments within 80 columns
+
+               static void *static_tramp_func(struct ftrace_ops *ops, struct dyn_ftrace *rec)
+               {
+                    unsigned long offset;
+                    bool save_regs = rec->flags & FTRACE_FL_REGS_EN;
+                    void *ptr;
+
+                    if (ops && ops->trampoline) {
+                    #if !defined(CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS) && \
+                        defined(CONFIG_FUNCTION_GRAPH_TRACER)
+
+                        if (ops->trampoline == FTRACE_GRAPH_ADDR)
+                            return (void *)prepare_ftrace_return;
+                    #endif
+                        return NULL;
+                    }
+
+                    offset = calc_trampoline_call_offset(save_regs);
+
+                    if (save_regs)
+                        ptr = (void *)FTRACE_REGS_ADDR + offset;
+                    else
+                        ptr = (void *)FTRACE_ADDR + offset;
+
+                    return addr_from_call(ptr);
+                }
+
+    'Prompt2': | 
+               /**
+               * ftrace_arch_code_modify_prepare - description of the function
+               * @void: description of the argument
+               *
+               * Functions Expectations:
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               */
+               Fill in the above block comment with information from the following code 
+               For Function's expectations: provide several lines of explanation for how every combination of arguments will affect the output start each explanation with a " -"
+               MAKE SURE TO ALWAYS PRODUCE A C BLOCK COMMENT, only produce one block comment
+
+               void ftrace_arch_code_modify_prepare(void)
+               __acquires(&text_mutex)
+               {
+
+                   mutex_lock(&text_mutex);
+                   ftrace_poke_late = 1;
+               }
+    'Prompt3': |
+               /**
+               * arch_ftrace_trampoline_func - description of the function
+               * @ops: description of the argument
+               * @rec: description of the argument
+               *
+               * Functions Expectations:
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               * -
+               */
+               Fill in the above block comment with information from the following code 
+               For Function's expectations: provide several lines of explanation for how every combination of arguments will affect the output start each explanation with a " -"
+               MAKE SURE TO ALWAYS PRODUCE A C BLOCK COMMENT, only produce one block comment
+               keep the comments within 80 columns
+
+               void *arch_ftrace_trampoline_func(struct ftrace_ops *ops, struct dyn_ftrace *rec)
+               {
+                   unsigned long offset;
+
+
+                   if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+                       return static_tramp_func(ops, rec);
+
+                   offset = calc_trampoline_call_offset(ops->flags & FTRACE_OPS_FL_SAVE_REGS);
+                   return addr_from_call((void *)ops->trampoline + offset);
+               }
+
+
+Responses:
+    'Response1': |
+                 /**
+                 * static_tramp_func - Generate a trampoline function for ftrace
+                 * @ops: Pointer to the ftrace_ops structure, which contains information about
+                 *       the tracing operation.
+                 * @rec: Pointer to the dyn_ftrace structure, which contains information about
+                 *       the dynamic ftrace record.
+                 *
+                 * Function's Expectations:
+                 * - If ops is NULL or ops->trampoline is not set, the function will calculate
+                 *   an offset based on whether save_regs is true and return a pointer to either
+                 *   FTRACE_REGS_ADDR or FTRACE_ADDR plus the calculated offset.
+                 * - If ops is not NULL but ops->trampoline is set to FTRACE_GRAPH_ADDR, the
+                 *   function will return a pointer to prepare_ftrace_return if CONFIG_FUNCTION_
+                 *   GRAPH_TRACER is defined and CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS is not.
+                 * - If ops is not NULL but ops->trampoline is set to any other value, the
+                 *   function will return NULL.
+                 * - The save_regs variable is determined by checking if FTRACE_FL_REGS_EN flag
+                 *   is set in rec->flags. This determines whether to use FTRACE_REGS_ADDR or
+                 *   FTRACE_ADDR as the base address for calculating the trampoline function's
+                 *   address.
+                 * - The offset is calculated using calc_trampoline_call_offset() with save_regs
+                 *   as an argument, which affects the final pointer returned by the function.
+                 * - The function returns a void pointer to the generated trampoline function,
+                 *   or NULL if ops->trampoline is set and not equal to FTRACE_GRAPH_ADDR.
+                  */
+    'Response2': |
+                /**
+                * ftrace_arch_code_modify_prepare - Prepare to modify the tracing code 
+                * @void: No arguments are expected for this function, as it only modifies 
+                * internal state and does not affect any external parameters.
+                *
+                * This function is called before modifying the tracing code. It ensures that 
+                * the tracing code is properly synchronized and sets a flag to indicate that 
+                * it has been modified.
+                *
+                * Function's Expectations:
+                * - When called with no arguments (i.e., void), the function will set ftrace_poke_late 
+                *   to 1, indicating that the tracing code has been modified. It then acquires the 
+                *   text_mutex lock to ensure exclusive access to the tracing code.
+                * - The function does not return any value, as it only modifies internal state and 
+                *   does not affect any external parameters.
+                * - If the function is called again with no arguments after it has already been 
+                *   called, the effect will be the same as if it were called for the first time. This 
+                *   is because the ftrace_poke_late flag is only set to 1 when the function is 
+                *   first called.
+                * - If any other argument is passed to this function (although this should not occur), 
+                *   the behavior is undefined and may result in unexpected or incorrect behavior.
+                */
+    'Response3': |
+                /**
+                * arch_ftrace_trampoline_func - Determine the trampoline function to use
+                * @ops: Pointer to ftrace_ops structure containing tracing options and flags
+                * @rec: Pointer to dyn_ftrace structure representing a dynamic tracer record
+                *
+                * Function's Expectations:
+                * - If ops is NULL, the function will return the address of static_tramp_func.
+                *   This ensures that even with an invalid ops pointer, a valid trampoline function
+                *   is still returned, preventing potential crashes or undefined behavior.
+                * - If ops is not NULL but does not have the FTRACE_OPS_FL_ALLOC_TRAMP flag set,
+                *   the function will return the address of static_tramp_func. This indicates that
+                *   a static trampoline should be used instead of an allocated one, likely due to
+                *   resource constraints or configuration settings.
+                * - If ops is not NULL and has the FTRACE_OPS_FL_ALLOC_TRAMP flag set but does not
+                *   have a valid trampoline address (i.e., ops->trampoline is NULL), the function
+                *   will return the address of static_tramp_func. This ensures that even with an
+                *   invalid trampoline address, a valid trampoline function is still returned.
+                * - If ops is not NULL and has the FTRACE_OPS_FL_ALLOC_TRAMP flag set and has a
+                *   valid trampoline address (i.e., ops->trampoline is not NULL), the function will
+                *   calculate the offset for the trampoline call based on the flags in ops. It then
+                *   returns the address of the allocated trampoline function, allowing for dynamic
+                *   tracing with custom trampolines.
+                 */
+
+
