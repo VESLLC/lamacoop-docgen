@@ -1,9 +1,32 @@
+# lamacoop-docgen - Python scripts for automating code and docs with LLMs
+# Copyright (C) 2025 VES LLC
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# For inquiries, please contact by email:
+#   info@ves.solutions
+#
+# Or if you prefer, by paper mail:
+#   VES LLC
+#   6180 Guardian Gtwy, Ste 102
+#   Aberdeen Proving Ground, MD 21005
+
 """
 Basic chunker with AI support. Currently only parses out functions. 
 ollama requires python 3.8 or later, our Rocky machines have python3.11 installed.
 Install packages with $ python3.11 -m pip install <packages>
-Need to tunnel to the ollama server with a command like: 
-$ ssh -L 11434:localhost:11434 lamina-ws1.int.ves.solutions
 """
 
 # Standard Libraries
